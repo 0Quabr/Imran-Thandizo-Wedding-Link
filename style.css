@@ -726,9 +726,9 @@ footer {
 }
 
 .slides img {
-    width: 25%;
-    height: 100%;
-    object-fit: cover;
+    width: 20%;
+    height: 90%;
+    object-fit:cover;
     flex-shrink: 0;
 }
 .slides:active {
