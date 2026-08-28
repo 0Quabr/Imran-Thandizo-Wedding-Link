@@ -712,7 +712,7 @@ footer {
 .slider {
     width: 100%;
     max-width: 650px;
-    height: 500px;
+    height: 75vh;
     margin:0 auto;
     overflow: hidden;
     border-radius: 10px;
@@ -721,18 +721,25 @@ footer {
 
 .slides {
     display: flex;
-    width: 400%;
-    transition:transform 0.5s ease;
+    width: 100%;
+   
 }
 
 .slides img {
-    width: 25%;
-    height: auto;
-   max-height:75vh; 
+   min-width:100%; 
+    width: 100%;
+    height: 100% ; 
     object-fit:contain;
     flex-shrink: 0;
-display:block; 
+
 }
+@media(max-width:600px){
+   .slider{
+      height:70vh; 
+      border-radius:10px; 
+   }
+}
+
 .slides:active {
     animation-play-state: paused;
 }
