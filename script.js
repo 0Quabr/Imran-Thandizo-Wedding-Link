@@ -120,179 +120,119 @@ updateCountdown();
 const countdownTimer =
     setInterval(updateCountdown, 1000);
 
+/* ================= PHOTO SLIDER ================= */
 
-/* =====================================================
-   2. PHOTO SLIDER
-   ===================================================== */
-
-const slider =
-    document.getElementById("slider");
-
-const slides =
-    document.getElementById("slides");
-
+const slider = document.getElementById("slider");
+const slides = document.getElementById("slides");
 
 let currentSlide = 0;
-
 let startX = 0;
-
 let sliderStarted = false;
 
-let slideTimer;
 
-
-/* ---------------------------------------------
-   SHOW CURRENT PHOTO
-   --------------------------------------------- */
+/* Show the current photo */
 
 function showSlide() {
 
     slides.style.transform =
-        `translateX(-${currentSlide * 100}%)`;
+        `translateX(-${currentSlide * 25}%)`;
 
 }
 
 
-/* ---------------------------------------------
-   START AUTOMATIC SLIDING
-   --------------------------------------------- */
+/* Start automatic sliding */
 
 function startSlider() {
 
-    if (sliderStarted) {
-        return;
-    }
+    if (sliderStarted) return;
 
     sliderStarted = true;
 
+    setInterval(function () {
 
-    slideTimer =
-        setInterval(function() {
+        currentSlide++;
+
+        if (currentSlide > 3) {
+            currentSlide = 0;
+        }
+
+        showSlide();
+
+    }, 4000);
+}
+
+
+/* Start ONLY when the slider is reached */
+
+if (slider) {
+
+    const observer = new IntersectionObserver(
+        function(entries) {
+
+            entries.forEach(function(entry) {
+
+                if (entry.isIntersecting) {
+                    startSlider();
+                }
+
+            });
+
+        },
+        {
+            threshold: 0.5
+        }
+    );
+
+    observer.observe(slider);
+}
+
+
+/* ================= SWIPE ================= */
+
+if (slider) {
+
+    slider.addEventListener("touchstart", function(event) {
+
+        startX = event.touches[0].clientX;
+
+    });
+
+
+    slider.addEventListener("touchend", function(event) {
+
+        const endX = event.changedTouches[0].clientX;
+
+        const difference = startX - endX;
+
+
+        /* Swipe LEFT */
+
+        if (difference > 50) {
 
             currentSlide++;
-
-            /* After photo 4, return to photo 1 */
 
             if (currentSlide > 3) {
                 currentSlide = 0;
             }
 
             showSlide();
-
-        }, 4000);
-
-}
-
-
-/* ---------------------------------------------
-   START SLIDER WHEN GALLERY IS REACHED
-   --------------------------------------------- */
-
-if (slider) {
-
-    const observer =
-        new IntersectionObserver(
-            function(entries) {
-
-                entries.forEach(function(entry) {
-
-                    if (entry.isIntersecting) {
-
-                        startSlider();
-
-                    }
-
-                });
-
-            },
-            {
-                threshold: 0.5
-            }
-        );
-
-
-    observer.observe(slider);
-
-}
-
-
-/* =====================================================
-   3. SWIPE LEFT / RIGHT
-   ===================================================== */
-
-if (slider) {
-
-
-    /* ---------------------------------------------
-       TOUCH START
-       --------------------------------------------- */
-
-    slider.addEventListener(
-        "touchstart",
-        function(event) {
-
-            startX =
-                event.touches[0].clientX;
-
         }
-    );
 
 
-    /* ---------------------------------------------
-       TOUCH END
-       --------------------------------------------- */
+        /* Swipe RIGHT */
 
-    slider.addEventListener(
-        "touchend",
-        function(event) {
+        if (difference < -50) {
 
-            const endX =
-                event.changedTouches[0].clientX;
+            currentSlide--;
 
-
-            const difference =
-                startX - endX;
-
-
-            /* -------------------------------------
-               SWIPE LEFT → NEXT PHOTO
-               ------------------------------------- */
-
-            if (difference > 50) {
-
-                currentSlide++;
-
-
-                if (currentSlide > 3) {
-                    currentSlide = 0;
-                }
-
-
-                showSlide();
-
+            if (currentSlide < 0) {
+                currentSlide = 3;
             }
 
-
-            /* -------------------------------------
-               SWIPE RIGHT → PREVIOUS PHOTO
-               ------------------------------------- */
-
-            if (difference < -50) {
-
-                currentSlide--;
-
-
-                if (currentSlide < 0) {
-                    currentSlide = 3;
-                }
-
-
-                showSlide();
-
-            }
-
+            showSlide();
         }
-    );
+
+    });
 
 }
 
