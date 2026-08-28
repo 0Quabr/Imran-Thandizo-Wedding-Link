@@ -1,34 +1,30 @@
 /* =====================================================
-   WEDDING WEBSITE - SCRIPT.JS
+   WEDDING COUNTDOWN
    ===================================================== */
 
+// CHANGE THIS TO YOUR REAL WEDDING DATE AND TIME
+const weddingDate = new Date("2026-12-26T10:00:00").getTime();
 
-/* ================= WEDDING DATE ================= */
+function updateCountdown() {
 
-/*
-   Change this date and time to the actual
-   wedding date and time.
-
-   Format:
-   YYYY-MM-DDTHH:MM:SS
-*/
-
-const weddingDate = new Date("2026-08-30T07:00:00").getTime();
-
-
-/* ================= COUNTDOWN ================= */
-
-const countdown = setInterval(function () {
-
-    // Get the current date and time
     const now = new Date().getTime();
 
-    // Calculate the remaining time
     const distance = weddingDate - now;
 
 
-    /* ================= TIME CALCULATION ================= */
+    // If wedding day has arrived
+    if (distance <= 0) {
 
+        document.getElementById("days").textContent = "00";
+        document.getElementById("hours").textContent = "00";
+        document.getElementById("minutes").textContent = "00";
+        document.getElementById("seconds").textContent = "00";
+
+        return;
+    }
+
+
+    // Calculate time
     const days = Math.floor(
         distance / (1000 * 60 * 60 * 24)
     );
@@ -49,8 +45,7 @@ const countdown = setInterval(function () {
     );
 
 
-    /* ================= DISPLAY ================= */
-
+    // Display countdown
     document.getElementById("days").textContent =
         String(days).padStart(2, "0");
 
@@ -62,122 +57,39 @@ const countdown = setInterval(function () {
 
     document.getElementById("seconds").textContent =
         String(seconds).padStart(2, "0");
+}
 
 
-    /* ================= WEDDING DAY ================= */
+// Start countdown
+updateCountdown();
 
-    if (distance < 0) {
-
-        clearInterval(countdown);
-
-        document.querySelector(".countdown").innerHTML = `
-            <div class="wedding-day-message">
-                🎉
-                <strong>THE BIG DAY IS HERE!</strong>
-                <span>Let's cerebrate ndi M'baleyuuuh  💍</span>
-            </div>
-        `;
-    }
-
-}, 1000);
+setInterval(updateCountdown, 1000);
 
 
 /* =====================================================
-   SMOOTH NAVIGATION
+   PHOTO SLIDER
    ===================================================== */
-
-document.querySelectorAll('.navbar a').forEach(function (link) {
-
-    link.addEventListener('click', function (event) {
-
-        const targetId = this.getAttribute('href');
-
-        const target = document.querySelector(targetId);
-
-        if (target) {
-
-            event.preventDefault();
-
-            target.scrollIntoView({
-                behavior: "smooth"
-            });
-
-        }
-
-    });
-
-});
-
-
-/* =====================================================
-   SIMPLE SCROLL REVEAL
-   ===================================================== */
-
-const revealElements = document.querySelectorAll(
-    ".detail-card, .program-card, .section-heading"
-);
-
-
-const observer = new IntersectionObserver(
-    function (entries) {
-
-        entries.forEach(function (entry) {
-
-            if (entry.isIntersecting) {
-
-                entry.target.style.opacity = "1";
-
-                entry.target.style.transform =
-                    "translateY(0)";
-
-                observer.unobserve(entry.target);
-            }
-
-        });
-
-    },
-    {
-        threshold: 0.15
-    }
-);
-
-
-/* ================= INITIAL STATE ================= */
-
-revealElements.forEach(function (element) {
-
-    element.style.opacity = "0";
-
-    element.style.transform =
-        "translateY(30px)";
-
-    element.style.transition =
-        "opacity 0.8s ease, transform 0.8s ease";
-
-    observer.observe(element);
-
-});
-
-/* ================= PHOTO SLIDER ================= */
 
 const slider = document.getElementById("slider");
 const slides = document.getElementById("slides");
 
 let currentSlide = 0;
 let startX = 0;
-let slideTimer = null;
 let sliderStarted = false;
+let slideTimer;
 
 
-/* Show current photo */
+/* Show photo */
 
 function showSlide() {
+
     slides.style.transform =
         `translateX(-${currentSlide * 100}%)`;
+
 }
 
 
-/* Start automatic sliding */
+/* Start automatic slider */
 
 function startSlider() {
 
@@ -199,14 +111,16 @@ function startSlider() {
 }
 
 
-/* Start only when gallery is reached */
+/* Start slider only when it reaches the screen */
 
 const observer = new IntersectionObserver(function(entries) {
 
     entries.forEach(function(entry) {
 
         if (entry.isIntersecting) {
+
             startSlider();
+
         }
 
     });
@@ -215,50 +129,90 @@ const observer = new IntersectionObserver(function(entries) {
     threshold: 0.5
 });
 
-observer.observe(slider);
+
+if (slider) {
+    observer.observe(slider);
+}
 
 
-/* ================= SWIPE ================= */
+/* =====================================================
+   SWIPE LEFT / RIGHT
+   ===================================================== */
 
-slider.addEventListener("touchstart", function(event) {
+if (slider) {
 
-    startX = event.touches[0].clientX;
+    slider.addEventListener("touchstart", function(event) {
 
-});
+        startX = event.touches[0].clientX;
 
-
-slider.addEventListener("touchend", function(event) {
-
-    const endX = event.changedTouches[0].clientX;
-
-    const difference = startX - endX;
+    });
 
 
-    /* Swipe LEFT */
+    slider.addEventListener("touchend", function(event) {
 
-    if (difference > 50) {
+        const endX =
+            event.changedTouches[0].clientX;
 
-        currentSlide++;
+        const difference =
+            startX - endX;
 
-        if (currentSlide > 3) {
-            currentSlide = 0;
+
+        /* Swipe LEFT */
+
+        if (difference > 50) {
+
+            currentSlide++;
+
+            if (currentSlide > 3) {
+                currentSlide = 0;
+            }
+
+            showSlide();
         }
 
-        showSlide();
-    }
 
+        /* Swipe RIGHT */
 
-    /* Swipe RIGHT */
+        if (difference < -50) {
 
-    if (difference < -50) {
+            currentSlide--;
 
-        currentSlide--;
+            if (currentSlide < 0) {
+                currentSlide = 3;
+            }
 
-        if (currentSlide < 0) {
-            currentSlide = 3;
+            showSlide();
         }
 
-        showSlide();
-    }
+    });
+
+}
+
+
+/* =====================================================
+   SMOOTH NAVIGATION
+   ===================================================== */
+
+document.querySelectorAll(".navbar a").forEach(function(link) {
+
+    link.addEventListener("click", function(event) {
+
+        const targetId =
+            this.getAttribute("href");
+
+        const target =
+            document.querySelector(targetId);
+
+        if (target) {
+
+            event.preventDefault();
+
+            target.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+    });
 
 });
