@@ -1,85 +1,149 @@
 /* =====================================================
-   WEDDING COUNTDOWN
+   WEDDING WEBSITE
+   COMPLETE SCRIPT.JS
    ===================================================== */
 
-// CHANGE THIS TO YOUR REAL WEDDING DATE AND TIME
-const weddingDate = new Date("2026-12-26T10:00:00").getTime();
+
+/* =====================================================
+   1. WEDDING COUNTDOWN
+   ===================================================== */
+
+// CHANGE THIS TO THE REAL WEDDING DATE AND TIME
+const weddingDate =
+    new Date("2026-08-30T07:00:00").getTime();
+
 
 function updateCountdown() {
 
-    const now = new Date().getTime();
+    const now =
+        new Date().getTime();
 
-    const distance = weddingDate - now;
+    const distance =
+        weddingDate - now;
 
 
-    // If wedding day has arrived
+    /* ---------------------------------------------
+       WHEN THE WEDDING DAY ARRIVES
+       --------------------------------------------- */
+
     if (distance <= 0) {
 
-        document.getElementById("days").textContent = "00";
-        document.getElementById("hours").textContent = "00";
-        document.getElementById("minutes").textContent = "00";
-        document.getElementById("seconds").textContent = "00";
+        const countdown =
+            document.querySelector(".countdown");
+
+        countdown.innerHTML = `
+            <div class="wedding-day-message">
+
+                <div class="celebration-icon">
+                    💍🎉
+                </div>
+
+                <h2>
+                    THE BIG DAY IS HERE!
+                </h2>
+
+                <p>
+                 LET'S CELEBRATE NDI M'BALEYU!!!!!
+                </p>
+
+            </div>
+        `;
 
         return;
     }
 
 
-    // Calculate time
-    const days = Math.floor(
-        distance / (1000 * 60 * 60 * 24)
-    );
+    /* ---------------------------------------------
+       CALCULATE REMAINING TIME
+       --------------------------------------------- */
 
-    const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) /
-        (1000 * 60 * 60)
-    );
-
-    const minutes = Math.floor(
-        (distance % (1000 * 60 * 60)) /
-        (1000 * 60)
-    );
-
-    const seconds = Math.floor(
-        (distance % (1000 * 60)) /
-        1000
-    );
+    const days =
+        Math.floor(
+            distance /
+            (1000 * 60 * 60 * 24)
+        );
 
 
-    // Display countdown
+    const hours =
+        Math.floor(
+            (distance %
+                (1000 * 60 * 60 * 24)) /
+            (1000 * 60 * 60)
+        );
+
+
+    const minutes =
+        Math.floor(
+            (distance %
+                (1000 * 60 * 60)) /
+            (1000 * 60)
+        );
+
+
+    const seconds =
+        Math.floor(
+            (distance %
+                (1000 * 60)) /
+            1000
+        );
+
+
+    /* ---------------------------------------------
+       DISPLAY COUNTDOWN
+       --------------------------------------------- */
+
     document.getElementById("days").textContent =
         String(days).padStart(2, "0");
+
 
     document.getElementById("hours").textContent =
         String(hours).padStart(2, "0");
 
+
     document.getElementById("minutes").textContent =
         String(minutes).padStart(2, "0");
 
+
     document.getElementById("seconds").textContent =
         String(seconds).padStart(2, "0");
+
 }
 
 
-// Start countdown
+/* Start countdown immediately */
+
 updateCountdown();
 
-setInterval(updateCountdown, 1000);
+
+/* Update every second */
+
+const countdownTimer =
+    setInterval(updateCountdown, 1000);
 
 
 /* =====================================================
-   PHOTO SLIDER
+   2. PHOTO SLIDER
    ===================================================== */
 
-const slider = document.getElementById("slider");
-const slides = document.getElementById("slides");
+const slider =
+    document.getElementById("slider");
+
+const slides =
+    document.getElementById("slides");
+
 
 let currentSlide = 0;
+
 let startX = 0;
+
 let sliderStarted = false;
+
 let slideTimer;
 
 
-/* Show photo */
+/* ---------------------------------------------
+   SHOW CURRENT PHOTO
+   --------------------------------------------- */
 
 function showSlide() {
 
@@ -89,130 +153,182 @@ function showSlide() {
 }
 
 
-/* Start automatic slider */
+/* ---------------------------------------------
+   START AUTOMATIC SLIDING
+   --------------------------------------------- */
 
 function startSlider() {
 
-    if (sliderStarted) return;
+    if (sliderStarted) {
+        return;
+    }
 
     sliderStarted = true;
 
-    slideTimer = setInterval(function () {
 
-        currentSlide++;
-
-        if (currentSlide > 3) {
-            currentSlide = 0;
-        }
-
-        showSlide();
-
-    }, 4000);
-}
-
-
-/* Start slider only when it reaches the screen */
-
-const observer = new IntersectionObserver(function(entries) {
-
-    entries.forEach(function(entry) {
-
-        if (entry.isIntersecting) {
-
-            startSlider();
-
-        }
-
-    });
-
-}, {
-    threshold: 0.5
-});
-
-
-if (slider) {
-    observer.observe(slider);
-}
-
-
-/* =====================================================
-   SWIPE LEFT / RIGHT
-   ===================================================== */
-
-if (slider) {
-
-    slider.addEventListener("touchstart", function(event) {
-
-        startX = event.touches[0].clientX;
-
-    });
-
-
-    slider.addEventListener("touchend", function(event) {
-
-        const endX =
-            event.changedTouches[0].clientX;
-
-        const difference =
-            startX - endX;
-
-
-        /* Swipe LEFT */
-
-        if (difference > 50) {
+    slideTimer =
+        setInterval(function() {
 
             currentSlide++;
+
+            /* After photo 4, return to photo 1 */
 
             if (currentSlide > 3) {
                 currentSlide = 0;
             }
 
             showSlide();
-        }
+
+        }, 4000);
+
+}
 
 
-        /* Swipe RIGHT */
+/* ---------------------------------------------
+   START SLIDER WHEN GALLERY IS REACHED
+   --------------------------------------------- */
 
-        if (difference < -50) {
+if (slider) {
 
-            currentSlide--;
+    const observer =
+        new IntersectionObserver(
+            function(entries) {
 
-            if (currentSlide < 0) {
-                currentSlide = 3;
+                entries.forEach(function(entry) {
+
+                    if (entry.isIntersecting) {
+
+                        startSlider();
+
+                    }
+
+                });
+
+            },
+            {
+                threshold: 0.5
             }
+        );
 
-            showSlide();
-        }
 
-    });
+    observer.observe(slider);
 
 }
 
 
 /* =====================================================
-   SMOOTH NAVIGATION
+   3. SWIPE LEFT / RIGHT
    ===================================================== */
 
-document.querySelectorAll(".navbar a").forEach(function(link) {
+if (slider) {
 
-    link.addEventListener("click", function(event) {
 
-        const targetId =
-            this.getAttribute("href");
+    /* ---------------------------------------------
+       TOUCH START
+       --------------------------------------------- */
 
-        const target =
-            document.querySelector(targetId);
+    slider.addEventListener(
+        "touchstart",
+        function(event) {
 
-        if (target) {
-
-            event.preventDefault();
-
-            target.scrollIntoView({
-                behavior: "smooth"
-            });
+            startX =
+                event.touches[0].clientX;
 
         }
+    );
+
+
+    /* ---------------------------------------------
+       TOUCH END
+       --------------------------------------------- */
+
+    slider.addEventListener(
+        "touchend",
+        function(event) {
+
+            const endX =
+                event.changedTouches[0].clientX;
+
+
+            const difference =
+                startX - endX;
+
+
+            /* -------------------------------------
+               SWIPE LEFT → NEXT PHOTO
+               ------------------------------------- */
+
+            if (difference > 50) {
+
+                currentSlide++;
+
+
+                if (currentSlide > 3) {
+                    currentSlide = 0;
+                }
+
+
+                showSlide();
+
+            }
+
+
+            /* -------------------------------------
+               SWIPE RIGHT → PREVIOUS PHOTO
+               ------------------------------------- */
+
+            if (difference < -50) {
+
+                currentSlide--;
+
+
+                if (currentSlide < 0) {
+                    currentSlide = 3;
+                }
+
+
+                showSlide();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   4. SMOOTH NAVIGATION
+   ===================================================== */
+
+document
+    .querySelectorAll(".navbar a")
+    .forEach(function(link) {
+
+        link.addEventListener(
+            "click",
+            function(event) {
+
+                const targetId =
+                    this.getAttribute("href");
+
+
+                const target =
+                    document.querySelector(targetId);
+
+
+                if (target) {
+
+                    event.preventDefault();
+
+
+                    target.scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+                }
+
+            }
+        );
 
     });
-
-});
