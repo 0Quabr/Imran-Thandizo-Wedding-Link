@@ -157,4 +157,106 @@ revealElements.forEach(function (element) {
     observer.observe(element);
 
 });
+const slider = document.getElementById("slider");
+const slides = document.getElementById("slides");
+
+let currentSlide = 0;
+let startX = 0;
+let slideTimer = null;
+let sliderStarted = false;
+
+
+/* ================= SHOW SLIDE ================= */
+
+function showSlide() {
+    slides.style.transform =
+        `translateX(-${currentSlide * 100}%)`;
+}
+
+
+/* ================= AUTOMATIC SLIDING ================= */
+
+function startSlider() {
+
+    if (sliderStarted) return;
+
+    sliderStarted = true;
+
+    slideTimer = setInterval(function () {
+
+        currentSlide++;
+
+        if (currentSlide > 3) {
+            currentSlide = 0;
+        }
+
+        showSlide();
+
+    }, 4000);
+}
+
+
+/* ================= START WHEN REACHED ================= */
+
+const observer = new IntersectionObserver(function(entries) {
+
+    entries.forEach(function(entry) {
+
+        if (entry.isIntersecting) {
+            startSlider();
+        }
+
+    });
+
+}, {
+    threshold: 0.5
+});
+
+observer.observe(slider);
+
+
+/* ================= SWIPE ================= */
+
+slider.addEventListener("touchstart", function(event) {
+
+    startX = event.touches[0].clientX;
+
+});
+
+
+slider.addEventListener("touchend", function(event) {
+
+    const endX = event.changedTouches[0].clientX;
+
+    const difference = startX - endX;
+
+
+    /* Swipe LEFT */
+
+    if (difference > 50) {
+
+        currentSlide++;
+
+        if (currentSlide > 3) {
+            currentSlide = 0;
+        }
+
+        showSlide();
+    }
+
+
+    /* Swipe RIGHT */
+
+    if (difference < -50) {
+
+        currentSlide--;
+
+        if (currentSlide < 0) {
+            currentSlide = 3;
+        }
+
+        showSlide();
+    }
+
+});
 
