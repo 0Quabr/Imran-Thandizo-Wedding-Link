@@ -272,3 +272,122 @@ document
         );
 
     });
+
+
+/* ================= PHOTO SLIDER ================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const slider = document.getElementById("slider");
+    const slides = document.getElementById("slides");
+
+    if (!slider || !slides) {
+        return;
+    }
+
+    let currentSlide = 0;
+    let sliderStarted = false;
+    let startX = 0;
+
+
+    /* Show a photo */
+
+    function showSlide() {
+
+        slides.style.transform =
+            "translateX(-" + (currentSlide * 100) + "%)";
+
+    }
+
+
+    /* Automatically change photos */
+
+    function startSlider() {
+
+        if (sliderStarted) {
+            return;
+        }
+
+        sliderStarted = true;
+
+        setInterval(function () {
+
+            currentSlide++;
+
+            if (currentSlide >= 4) {
+                currentSlide = 0;
+            }
+
+            showSlide();
+
+        }, 4000);
+
+    }
+
+
+    /* Start when the slider reaches the screen */
+
+    const observer = new IntersectionObserver(function (entries) {
+
+        if (entries[0].isIntersecting) {
+
+            startSlider();
+
+        }
+
+    }, {
+        threshold: 0.3
+    });
+
+
+    observer.observe(slider);
+
+
+    /* ================= SWIPE ================= */
+
+    slider.addEventListener("touchstart", function (event) {
+
+        startX = event.touches[0].clientX;
+
+    });
+
+
+    slider.addEventListener("touchend", function (event) {
+
+        const endX = event.changedTouches[0].clientX;
+
+        const difference = startX - endX;
+
+
+        /* Swipe LEFT */
+
+        if (difference > 50) {
+
+            currentSlide++;
+
+            if (currentSlide >= 4) {
+                currentSlide = 0;
+            }
+
+            showSlide();
+
+        }
+
+
+        /* Swipe RIGHT */
+
+        if (difference < -50) {
+
+            currentSlide--;
+
+            if (currentSlide < 0) {
+                currentSlide = 3;
+            }
+
+            showSlide();
+
+        }
+
+    });
+
+});
