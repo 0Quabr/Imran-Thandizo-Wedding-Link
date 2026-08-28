@@ -157,6 +157,9 @@ revealElements.forEach(function (element) {
     observer.observe(element);
 
 });
+
+/* ================= PHOTO SLIDER ================= */
+
 const slider = document.getElementById("slider");
 const slides = document.getElementById("slides");
 
@@ -166,7 +169,7 @@ let slideTimer = null;
 let sliderStarted = false;
 
 
-/* ================= SHOW SLIDE ================= */
+/* Show current photo */
 
 function showSlide() {
     slides.style.transform =
@@ -174,7 +177,7 @@ function showSlide() {
 }
 
 
-/* ================= AUTOMATIC SLIDING ================= */
+/* Start automatic sliding */
 
 function startSlider() {
 
@@ -196,7 +199,7 @@ function startSlider() {
 }
 
 
-/* ================= START WHEN REACHED ================= */
+/* Start only when gallery is reached */
 
 const observer = new IntersectionObserver(function(entries) {
 
@@ -259,4 +262,3 @@ slider.addEventListener("touchend", function(event) {
     }
 
 });
-
